@@ -18,7 +18,7 @@
 
     <div class="container mt-5">
         <h2 class="text-center">Registro de Usuario</h2>
-        <form action="RegisterServlet" method="post">
+        <form action="userServlet?action=register" method="post">
 
             <label for="correo">Correo</label>
             <input type="email" class="form-control" id="correo" name="correo" required>

@@ -17,7 +17,7 @@
 <body>
     <div class="container mt-5">
         <h2 class="text-center">Inicio de Sesión</h2>
-        <form action="LoginServlet" method="post">
+        <form action="userServlet?action=login" method="post">
             <div class="form-group">
                 <label for="correo">Correo</label>
                 <input type="email" class="form-control" id="correo" name="correo" required>

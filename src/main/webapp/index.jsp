@@ -13,8 +13,8 @@
     <h1>Bienvenidos!</h1>
     <br/>
 
-    <a href="userServlet?action=register" class="btn btn-primary">Registro</a>
-    <a href="userServlet?action=login" class="btn btn-primary">Login</a>
+    <a href="userServlet?action=registerPage" class="btn btn-primary">Registro</a>
+    <a href="userServlet?action=loginPage" class="btn btn-primary">Login</a>
 </section>
 </body>
 
