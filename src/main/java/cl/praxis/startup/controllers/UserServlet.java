@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 
 @WebServlet("/userServlet")
@@ -31,10 +32,18 @@ public class UserServlet extends HttpServlet {
                 showLoginPage(request,response);
                 break;
             case "login":
-                login(request,response);
+                try {
+                    login(request,response);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
                 break;
             case "register":
-                register(request,response);
+                try {
+                    register(request,response);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
                 break;
             default: return;
         }
@@ -52,7 +61,7 @@ public class UserServlet extends HttpServlet {
         request.getRequestDispatcher("login.jsp").forward(request, response);
     }
 
-    private void login(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    private void login(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException, SQLException {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
 
@@ -66,7 +75,7 @@ public class UserServlet extends HttpServlet {
         }
     }
 
-    private void register(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void register(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
         String email = request.getParameter("correo");
         String nick = request.getParameter("nick");
         String name = request.getParameter("nombre");
@@ -82,13 +91,16 @@ public class UserServlet extends HttpServlet {
 
         // Lógica para almacenar el nuevo usuario en la base de datos
         UserDTO newUser = new UserDTO(email, nick, name, password, peso, createdAt, updatedAt);
-        userService.insertUser(newUser);
 
-        // Redirigir a una página de éxito
-        request.getSession().setAttribute("user", nick);
-        request.getSession().setAttribute("email", email);
-        request.getRequestDispatcher("home.jsp").forward(request, response);
+        if(!userService.userExists(newUser)){
+            request.setAttribute("error", "Email already exists");
+            request.getRequestDispatcher("register.jsp").forward(request, response);
+        }else{
+            userService.registerUser(newUser);
+            // Redirigir a una página de éxito
+            request.getSession().setAttribute("user", nick);
+            request.getSession().setAttribute("email", email);
+            request.getRequestDispatcher("home.jsp").forward(request, response);
+        }
     }
-
-
 }

@@ -22,7 +22,12 @@
 
             <label for="correo">Correo</label>
             <input type="email" class="form-control" id="correo" name="correo" required>
-
+            <%
+                String error = (String) request.getAttribute("error");
+                if (error != null) {
+                    out.println("<p style='color:red;'>" + error + "</p>");
+                }
+            %>
             <label for="nick">Nick</label>
             <input type="text" class="form-control" id="nick" name="nick" required>
 

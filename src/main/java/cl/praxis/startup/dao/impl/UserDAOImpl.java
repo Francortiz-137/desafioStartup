@@ -9,10 +9,10 @@ import java.time.LocalDateTime;
 
 public class UserDAOImpl implements UserDAO {
 
-    private static final String SELECT_ALL_USERS = "SELECT id, nombre, rut, direccion, correo, telefono, contacto, telefono_contacto FROM proveedores";
-    private static final String SELECT_USER_BY_EMAIL = "SELECT id, correo, created_at, nick, nombre, password, peso, updated_at FROM usuarios WHERE id = ?";
+    private static final String EMAIL_EXISTS_SQL = "SELECT COUNT(*) FROM usuarios WHERE correo = ?";
+    private static final String SELECT_USER_BY_EMAIL = "SELECT id, correo, created_at, nick, nombre, password, peso, updated_at FROM usuarios WHERE correo = ?";
     private static final String INSERT_USER_SQL = "INSERT INTO usuarios (correo, created_at, nick, nombre, password, peso, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)";
-    private static final String AUTH_USER_SQL = "SELECT * FROM usuarios WHERE username = ? AND password = ?";
+    private static final String AUTH_USER_SQL = "SELECT id, correo, created_at, nick, nombre, password, peso, updated_at FROM usuarios WHERE correo = ? AND password = ?";
     @Override
     public UserDTO insertUser(UserDTO user) {
         UserDTO newUser = new UserDTO();
@@ -48,6 +48,18 @@ public class UserDAOImpl implements UserDAO {
         }
     }
 
+    public boolean emailExists(String email) throws SQLException {
+        try (PreparedStatement statement = MySQLConnection.getInstance().getConnection().prepareStatement(EMAIL_EXISTS_SQL)) {
+            statement.setString(1, email);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt(1) > 0;
+                }
+                return false;
+            }
+        }
+    }
+
     @Override
     public UserDTO findUserByEmail(String email) {
         UserDTO user = null;
@@ -71,5 +83,4 @@ public class UserDAOImpl implements UserDAO {
         }
         return user;
     }
-
 }
