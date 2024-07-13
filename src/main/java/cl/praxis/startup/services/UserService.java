@@ -3,6 +3,7 @@ package cl.praxis.startup.services;
 import cl.praxis.startup.models.UserDTO;
 
 import java.sql.SQLException;
+import java.util.List;
 
 public interface UserService {
     UserDTO insertUser(UserDTO newUser);
@@ -15,4 +16,8 @@ public interface UserService {
     UserDTO findUserByEmail(String email) throws SQLException;
 
     boolean userExists(UserDTO newUser) throws SQLException;
+
+    boolean isAdmin(UserDTO userDTO);
+
+    List<UserDTO> findAllUsers();
 }

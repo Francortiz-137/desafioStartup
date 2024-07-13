@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @WebServlet("/userServlet")
 public class UserServlet extends HttpServlet {
@@ -69,6 +70,9 @@ public class UserServlet extends HttpServlet {
             UserDTO userDTO = userService.findUserByEmail(email);
             request.getSession().setAttribute("user", userDTO.getNick());
             request.getSession().setAttribute("email", email);
+            if(userService.isAdmin(userDTO))
+                request.getSession().setAttribute("userRole", "admin");
+            request.getSession().setAttribute("users", getAllUsers(request,response));
             request.getRequestDispatcher("home.jsp").forward(request, response);
         }else{
             request.setAttribute("error", "Incorrect email or password");
@@ -103,5 +107,9 @@ public class UserServlet extends HttpServlet {
             request.getSession().setAttribute("email", email);
             request.getRequestDispatcher("home.jsp").forward(request, response);
         }
+    }
+
+    private List<UserDTO> getAllUsers(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        return userService.findAllUsers();
     }
 }

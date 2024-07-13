@@ -16,14 +16,14 @@
 
 </head>
 <body>
-    <section class="container">
-        <h1>Bienvenido</h1>
-        <p>Usuario: ${user}</p>
-        <p>Correo: ${email}</p>
 
-    </section>
     <c:if test="${userRole == 'admin'}">
+        <section class="container">
+            <h1>Bienvenido</h1>
+            <p>Usuario: ${user}</p>
+            <p>Correo: ${email}</p>
 
+        </section>
         <section class="container">
             <table class="table table-striped">
                 <thead>
@@ -42,18 +42,21 @@
                 <c:forEach var="user" items="${users}">
                     <tr>
                         <td>${user.id}</td>
-                        <td>${user.correo}</td>
+                        <td>${user.email}</td>
                         <td>${user.nick}</td>
-                        <td>${user.nombre}</td>
+                        <td>${user.name}</td>
                         <td>${user.password}</td>
-                        <td>${user.peso}</td>
-                        <td>${user.created_at}</td>
-                        <td>${user.updated_at}</td>
+                        <td>${user.weight}</td>
+                        <td>${user.createdAt}</td>
+                        <td>${user.updatedAt}</td>
                     </tr>
                 </c:forEach>
                 </tbody>
             </table>
         </section>
+    </c:if>
+    <c:if test="${userRole != 'admin'}">
+        <p class="text-danger">Error de permisos</p>
     </c:if>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>

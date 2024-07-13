@@ -6,6 +6,7 @@ import cl.praxis.startup.models.UserDTO;
 import cl.praxis.startup.services.UserService;
 
 import java.sql.SQLException;
+import java.util.List;
 
 public class UserServiceImpl implements UserService {
 
@@ -38,5 +39,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean userExists(UserDTO newUser) throws SQLException {
         return userDAO.emailExists(newUser.getEmail());
+    }
+
+    @Override
+    public boolean isAdmin(UserDTO userDTO) {
+        return userDAO.isUserAdmin(userDTO.getId());
+    }
+
+    @Override
+    public List<UserDTO> findAllUsers() {
+        return userDAO.findAllUsers();
     }
 }
