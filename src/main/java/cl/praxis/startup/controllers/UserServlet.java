@@ -71,16 +71,17 @@ public class UserServlet extends HttpServlet {
             request.getSession().setAttribute("email", email);
             request.getRequestDispatcher("home.jsp").forward(request, response);
         }else{
+            request.setAttribute("error", "Incorrect email or password");
             request.getRequestDispatcher("login.jsp").forward(request, response);
         }
     }
 
     private void register(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
-        String email = request.getParameter("correo");
+        String email = request.getParameter("email");
         String nick = request.getParameter("nick");
-        String name = request.getParameter("nombre");
+        String name = request.getParameter("name");
         String password = request.getParameter("password");
-        String weightStr = request.getParameter("peso");
+        String weightStr = request.getParameter("weight");
         LocalDateTime createdAt = LocalDateTime.now();
         LocalDateTime updatedAt = LocalDateTime.now();
         // Convertir peso a decimal si se proporcionó

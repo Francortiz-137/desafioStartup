@@ -13,6 +13,7 @@ public class UserDAOImpl implements UserDAO {
     private static final String SELECT_USER_BY_EMAIL = "SELECT id, correo, created_at, nick, nombre, password, peso, updated_at FROM usuarios WHERE correo = ?";
     private static final String INSERT_USER_SQL = "INSERT INTO usuarios (correo, created_at, nick, nombre, password, peso, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)";
     private static final String AUTH_USER_SQL = "SELECT id, correo, created_at, nick, nombre, password, peso, updated_at FROM usuarios WHERE correo = ? AND password = ?";
+    private static final String IS_ADMIN_SQL = "SELECT COUNT(*) FROM roles_usuarios WHERE usuario_id = ? AND role_id = ?";
     @Override
     public UserDTO insertUser(UserDTO user) {
         UserDTO newUser = new UserDTO();
@@ -65,6 +66,7 @@ public class UserDAOImpl implements UserDAO {
         UserDTO user = null;
         try (Connection connection = MySQLConnection.getInstance().getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(SELECT_USER_BY_EMAIL)){
+            preparedStatement.setString(1, email);
             ResultSet rs = preparedStatement.executeQuery();
             if (rs.next()) {
                 int id = rs.getInt("id");
@@ -72,7 +74,7 @@ public class UserDAOImpl implements UserDAO {
                 String nick = rs.getString("nick");
                 String name = rs.getString("nombre");
                 String password = rs.getString("password");
-                Integer weight = rs.getInt("weight");
+                Integer weight = rs.getInt("peso");
                 Timestamp updatedAtTimestamp = rs.getTimestamp("updated_at");
                 LocalDateTime createdAt = createdAtTimestamp != null ? createdAtTimestamp.toLocalDateTime() : null;
                 LocalDateTime updatedAt = updatedAtTimestamp != null ? updatedAtTimestamp.toLocalDateTime() : null;
