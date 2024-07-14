@@ -3,7 +3,9 @@ package cl.praxis.startup.controllers;
 import cl.praxis.startup.models.UserDTO;
 import cl.praxis.startup.models.VehicleDTO;
 import cl.praxis.startup.services.UserService;
+import cl.praxis.startup.services.VehicleService;
 import cl.praxis.startup.services.impl.UserServiceImpl;
+import cl.praxis.startup.services.impl.VehicleServiceImpl;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -19,10 +21,12 @@ import java.util.List;
 public class UserServlet extends HttpServlet {
 
     UserService userService;
+    VehicleService vehicleService;
 
     @Override
     public void init() throws ServletException {
         userService = new UserServiceImpl();
+        vehicleService = new VehicleServiceImpl();
     }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -50,12 +54,43 @@ public class UserServlet extends HttpServlet {
             case "showVehicles":
                 showVehiclesPage(request,response);
                 break;
-            default: return;
+            case "addVehicle":
+                addVehicle(request,response);
+                break;
+            default:
+                showIndex(request,response);
+                break;
         }
+    }
+
+    private void addVehicle(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String name = request.getParameter("name");
+        String url = request.getParameter("url");
+        String userIdStr = request.getParameter("userId");
+
+        if (name == null || name.trim().isEmpty() ||
+                url == null || url.trim().isEmpty() ||
+                userIdStr == null || userIdStr.trim().isEmpty()) {
+            request.setAttribute("error", "All fields are required.");
+            request.getRequestDispatcher("user-vehicles.jsp").forward(request, response);
+            return;
+        }
+
+        int userId = Integer.parseInt(userIdStr);
+        VehicleDTO vehicleDTO = new VehicleDTO(name,url,userId);
+        vehicleService.insertVehicle(vehicleDTO);
+        UserDTO userDTO = userService.findUserById(userId);
+        List<VehicleDTO> vehicleList = userService.getVehicles(userDTO);
+        request.setAttribute("vehicles", vehicleList);
+        request.getRequestDispatcher("user-vehicles.jsp").forward(request, response);
     }
 
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         doGet(request, response);
+    }
+
+    private void showIndex(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.getRequestDispatcher("index.jsp").forward(request, response);
     }
 
     private void showRegisterPage(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -71,12 +106,19 @@ public class UserServlet extends HttpServlet {
         UserDTO userDTO = userService.findUserById(id);
         List<VehicleDTO> vehicleList = userService.getVehicles(userDTO);
         request.setAttribute("vehicles", vehicleList);
+        request.setAttribute("userId", id);
         request.getRequestDispatcher("user-vehicles.jsp").forward(request, response);
     }
 
     private void login(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException, SQLException {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
+
+        if (email == null || email.trim().isEmpty() ||
+                password == null || password.trim().isEmpty()) {
+            request.setAttribute("error", "All fields are required.");
+            request.getRequestDispatcher("login.jsp").forward(request, response);
+        }
 
         if(userService.authUser(email,password)){
             UserDTO userDTO = userService.findUserByEmail(email);
@@ -100,6 +142,15 @@ public class UserServlet extends HttpServlet {
         String weightStr = request.getParameter("weight");
         LocalDateTime createdAt = LocalDateTime.now();
         LocalDateTime updatedAt = LocalDateTime.now();
+
+        if (email == null || email.trim().isEmpty() ||
+                nick == null || nick.trim().isEmpty() ||
+                name == null || name.trim().isEmpty() ||
+                password == null || password.trim().isEmpty()) {
+            request.setAttribute("error", "All fields are required.");
+            request.getRequestDispatcher("register.jsp").forward(request, response);
+        }
+
         // Convertir peso a decimal si se proporcionó
         float weight = 0.0f;
         if (weightStr != null && !weightStr.isEmpty()) {
@@ -119,6 +170,7 @@ public class UserServlet extends HttpServlet {
             // Redirigir a una página de éxito
             request.getSession().setAttribute("user", nick);
             request.getSession().setAttribute("email", email);
+            request.getSession().setAttribute("users", getAllUsers(request,response));
             request.getRequestDispatcher("home.jsp").forward(request, response);
         }
     }

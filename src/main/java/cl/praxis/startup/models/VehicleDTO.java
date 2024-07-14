@@ -12,4 +12,10 @@ public class VehicleDTO {
     private String name;
     private String url;
     private int userId;
+
+    public VehicleDTO(String name, String url, int userId) {
+        this.name = name;
+        this.url = url;
+        this.userId = userId;
+    }
 }

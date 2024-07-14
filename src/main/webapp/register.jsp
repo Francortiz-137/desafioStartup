@@ -25,7 +25,7 @@
             <%
                 String error = (String) request.getAttribute("error");
                 if (error != null) {
-                    out.println("<p style='color:red;'>" + error + "</p>");
+                    out.println("<p class='text-danger'>" + error + "</p>");
                 }
             %>
             <label for="nick">Nick</label>

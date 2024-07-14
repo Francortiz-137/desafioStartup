@@ -17,8 +17,27 @@
 </head>
 <body>
 
+<h2 class="text-center">Lista de vehiculos</h2>
+
 <div class="container mt-5">
-    <h2>Lista de vehiculos</h2>
+    <form action="userServlet?action=addVehicle" method="post">
+        <div class="form-group">
+            <label for="name">Nombre del Vehiculo</label>
+            <input type="text" class="form-control" id="name" name="name" required>
+        </div>
+        <div class="form-group">
+            <label for="url">URL</label>
+            <input type="text" class="form-control" id="url" name="url" required>
+        </div>
+        <input type="hidden" id="userId" name="userId" value="${userId}">
+        <%
+            String error = (String) request.getAttribute("error");
+            if (error != null) {
+                out.println("<p class='text-danger'>" + error + "</p>");
+            }
+        %>
+        <button type="submit" class="btn btn-primary">Add Vehicle</button>
+    </form>
     <table class="table table-striped">
         <thead>
         <tr>
