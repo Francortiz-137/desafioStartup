@@ -17,13 +17,15 @@
 </head>
 <body>
 
-    <c:if test="${userRole == 'admin'}">
-        <section class="container">
-            <h1>Bienvenido</h1>
-            <p>Usuario: ${user}</p>
-            <p>Correo: ${email}</p>
+    <section class="container">
+        <h1>Bienvenido</h1>
+        <p>Usuario: ${user}</p>
+        <p>Correo: ${email}</p>
 
-        </section>
+    </section>
+
+    <c:if test="${userRole == 'admin'}">
+
         <section class="container">
             <form action="userServlet?action=register" method="post">
 
@@ -82,7 +84,7 @@
         </section>
     </c:if>
     <c:if test="${userRole != 'admin'}">
-        <p class="text-danger">Error de permisos. No eres Administrador</p>
+        <p class="text-danger text-center">Error de permisos. No eres Administrador. Para visualizar el listado de usuarios por favor ingresa con un cuenta de administrador.</p>
     </c:if>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
