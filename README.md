@@ -1,6 +1,5 @@
 # Desafio Startup
 
-Breve descripción del proyecto y propósito.
 Una StartUp ha solicitado la segunda parte de la creación del Core de un sistema de gestión
 y administración de vehículos a los cuales tendrán acceso los trabajadores, para ello, ahora
 han solicitado la visualización de los diversos autos por parte de los usuarios con rol
