@@ -1,6 +1,7 @@
 package cl.praxis.startup.controllers;
 
 import cl.praxis.startup.models.UserDTO;
+import cl.praxis.startup.models.VehicleDTO;
 import cl.praxis.startup.services.UserService;
 import cl.praxis.startup.services.impl.UserServiceImpl;
 import jakarta.servlet.ServletException;
@@ -46,6 +47,9 @@ public class UserServlet extends HttpServlet {
                     throw new RuntimeException(e);
                 }
                 break;
+            case "showVehicles":
+                showVehiclesPage(request,response);
+                break;
             default: return;
         }
     }
@@ -60,6 +64,14 @@ public class UserServlet extends HttpServlet {
 
     private void showLoginPage(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         request.getRequestDispatcher("login.jsp").forward(request, response);
+    }
+
+    private void showVehiclesPage(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        int id = Integer.parseInt(request.getParameter("userId"));
+        UserDTO userDTO = userService.findUserById(id);
+        List<VehicleDTO> vehicleList = userService.getVehicles(userDTO);
+        request.setAttribute("vehicles", vehicleList);
+        request.getRequestDispatcher("user-vehicles.jsp").forward(request, response);
     }
 
     private void login(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException, SQLException {
@@ -89,15 +101,17 @@ public class UserServlet extends HttpServlet {
         LocalDateTime createdAt = LocalDateTime.now();
         LocalDateTime updatedAt = LocalDateTime.now();
         // Convertir peso a decimal si se proporcionó
-        Integer peso = null;
+        float weight = 0.0f;
         if (weightStr != null && !weightStr.isEmpty()) {
-            peso = Integer.parseInt(weightStr);
+            weight = Float.parseFloat(weightStr);
+        }else{
+            throw new ServletException("Invalid weight");
         }
 
         // Lógica para almacenar el nuevo usuario en la base de datos
-        UserDTO newUser = new UserDTO(email, nick, name, password, peso, createdAt, updatedAt);
+        UserDTO newUser = new UserDTO(email, nick, name, password, weight, createdAt, updatedAt);
 
-        if(!userService.userExists(newUser)){
+        if(userService.userExists(newUser)){
             request.setAttribute("error", "Email already exists");
             request.getRequestDispatcher("register.jsp").forward(request, response);
         }else{

@@ -3,6 +3,7 @@ package cl.praxis.startup.services.impl;
 import cl.praxis.startup.dao.UserDAO;
 import cl.praxis.startup.dao.impl.UserDAOImpl;
 import cl.praxis.startup.models.UserDTO;
+import cl.praxis.startup.models.VehicleDTO;
 import cl.praxis.startup.services.UserService;
 
 import java.sql.SQLException;
@@ -49,5 +50,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDTO> findAllUsers() {
         return userDAO.findAllUsers();
+    }
+
+    @Override
+    public UserDTO findUserById(int id) {
+        return userDAO.findUserById(id);
+    }
+
+    @Override
+    public List<VehicleDTO> getVehicles(UserDTO userDTO) {
+        return userDAO.getVehiclesFromUser(userDTO);
     }
 }

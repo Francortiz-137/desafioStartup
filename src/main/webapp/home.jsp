@@ -25,6 +25,30 @@
 
         </section>
         <section class="container">
+            <form action="userServlet?action=register" method="post">
+
+                <label for="email">Correo</label>
+                <input type="email" class="form-control" id="email" name="email" required>
+                <%
+                    String error = (String) request.getAttribute("error");
+                    if (error != null) {
+                        out.println("<p style='color:red;'>" + error + "</p>");
+                    }
+                %>
+                <label for="nick">Nick</label>
+                <input type="text" class="form-control" id="nick" name="nick" required>
+
+                <label for="name">Nombre</label>
+                <input type="text" class="form-control" id="name" name="name" required>
+
+                <label for="password">Contraseña</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+
+                <label for="weight">Peso</label>
+                <input type="number" step="0.01" class="form-control" id="weight" name="weight">
+
+                <button type="submit" class="btn btn-primary">Registrar</button>
+            </form>
             <table class="table table-striped">
                 <thead>
                 <tr>
@@ -36,6 +60,7 @@
                     <th>Peso</th>
                     <th>Creado en</th>
                     <th>Actualizado en</th>
+                    <th>Vehiculos</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -49,6 +74,7 @@
                         <td>${user.weight}</td>
                         <td>${user.createdAt}</td>
                         <td>${user.updatedAt}</td>
+                        <td><a href="userServlet?action=showVehicles&userId=${user.id}" class="btn btn-primary">Vehiculos</a></td>
                     </tr>
                 </c:forEach>
                 </tbody>
@@ -56,7 +82,7 @@
         </section>
     </c:if>
     <c:if test="${userRole != 'admin'}">
-        <p class="text-danger">Error de permisos</p>
+        <p class="text-danger">Error de permisos. No eres Administrador</p>
     </c:if>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>

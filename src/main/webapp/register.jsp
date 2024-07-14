@@ -20,8 +20,8 @@
         <h2 class="text-center">Registro de Usuario</h2>
         <form action="userServlet?action=register" method="post">
 
-            <label for="correo">Correo</label>
-            <input type="email" class="form-control" id="correo" name="correo" required>
+            <label for="email">Correo</label>
+            <input type="email" class="form-control" id="email" name="email" required>
             <%
                 String error = (String) request.getAttribute("error");
                 if (error != null) {
@@ -31,14 +31,14 @@
             <label for="nick">Nick</label>
             <input type="text" class="form-control" id="nick" name="nick" required>
 
-            <label for="nombre">Nombre</label>
-            <input type="text" class="form-control" id="nombre" name="nombre" required>
+            <label for="name">Nombre</label>
+            <input type="text" class="form-control" id="name" name="name" required>
 
             <label for="password">Contraseña</label>
             <input type="password" class="form-control" id="password" name="password" required>
 
-            <label for="peso">Peso</label>
-            <input type="number" step="0.01" class="form-control" id="peso" name="peso">
+            <label for="weight">Peso</label>
+            <input type="number" step="0.01" class="form-control" id="weight" name="weight">
 
             <button type="submit" class="btn btn-primary">Registrar</button>
         </form>

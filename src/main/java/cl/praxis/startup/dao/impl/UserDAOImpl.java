@@ -3,6 +3,7 @@ package cl.praxis.startup.dao.impl;
 import cl.praxis.startup.connection.MySQLConnection;
 import cl.praxis.startup.dao.UserDAO;
 import cl.praxis.startup.models.UserDTO;
+import cl.praxis.startup.models.VehicleDTO;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -14,9 +15,11 @@ public class UserDAOImpl implements UserDAO {
     private static final String SELECT_ALL_USERS = "SELECT id, correo, created_at, nick, nombre, password, peso, updated_at FROM usuarios";
     private static final String EMAIL_EXISTS_SQL = "SELECT COUNT(*) FROM usuarios WHERE correo = ?";
     private static final String SELECT_USER_BY_EMAIL = "SELECT id, correo, created_at, nick, nombre, password, peso, updated_at FROM usuarios WHERE correo = ?";
+    private static final String SELECT_USER_BY_ID = "SELECT id, correo, created_at, nick, nombre, password, peso, updated_at FROM usuarios WHERE id = ?";
     private static final String INSERT_USER_SQL = "INSERT INTO usuarios (correo, created_at, nick, nombre, password, peso, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)";
     private static final String AUTH_USER_SQL = "SELECT id, correo, created_at, nick, nombre, password, peso, updated_at FROM usuarios WHERE correo = ? AND password = ?";
     private static final String IS_ADMIN_SQL = "SELECT COUNT(*) FROM roles_usuarios ru JOIN roles r ON ru.rol_id = r.id WHERE ru.usuario_id = ? AND r.nombre = 'admin'";
+    private static final String GET_VEHICLES_FROM_USER ="SELECT id, nombre, url, id_usuario FROM vehiculos WHERE id_usuario = ?";
     @Override
     public UserDTO insertUser(UserDTO user) {
         UserDTO newUser = new UserDTO();
@@ -26,7 +29,7 @@ public class UserDAOImpl implements UserDAO {
             preparedStatement.setString(3, user.getNick());
             preparedStatement.setString(4, user.getName());
             preparedStatement.setString(5, user.getPassword());
-            preparedStatement.setInt(6, user.getWeight());
+            preparedStatement.setFloat(6, user.getWeight());
             preparedStatement.setString(7, String.valueOf(user.getUpdatedAt()));
             preparedStatement.executeUpdate();
             ResultSet rs = preparedStatement.getGeneratedKeys();
@@ -65,6 +68,57 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
+    public UserDTO findUserById(int id) {
+        UserDTO user = null;
+        try (Connection connection = MySQLConnection.getInstance().getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_USER_BY_ID)){
+            preparedStatement.setInt(1, id);
+            ResultSet rs = preparedStatement.executeQuery();
+            if (rs.next()) {
+                String email = rs.getString("correo");
+                Timestamp createdAtTimestamp = rs.getTimestamp("created_at");
+                String nick = rs.getString("nick");
+                String name = rs.getString("nombre");
+                String password = rs.getString("password");
+                float weight = rs.getFloat("peso");
+                Timestamp updatedAtTimestamp = rs.getTimestamp("updated_at");
+                LocalDateTime createdAt = createdAtTimestamp != null ? createdAtTimestamp.toLocalDateTime() : null;
+                LocalDateTime updatedAt = updatedAtTimestamp != null ? updatedAtTimestamp.toLocalDateTime() : null;
+                user = new UserDTO(id,email,nick,name,password,weight,createdAt,updatedAt);
+            }
+        }catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return user;
+    }
+
+    @Override
+    public List<VehicleDTO> getVehiclesFromUser(UserDTO userDTO) {
+        List<VehicleDTO> vehicles = new ArrayList<>();
+
+        try (Connection connection = MySQLConnection.getInstance().getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(GET_VEHICLES_FROM_USER)) {
+
+            preparedStatement.setInt(1, userDTO.getId());
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    VehicleDTO vehicle = new VehicleDTO(
+                            resultSet.getInt("id"),
+                            resultSet.getString("nombre"),
+                            resultSet.getString("url"),
+                            resultSet.getInt("id_usuario")
+                    );
+                    vehicles.add(vehicle);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return vehicles;
+    }
+
+    @Override
     public UserDTO findUserByEmail(String email) {
         UserDTO user = null;
         try (Connection connection = MySQLConnection.getInstance().getConnection();
@@ -77,7 +131,7 @@ public class UserDAOImpl implements UserDAO {
                 String nick = rs.getString("nick");
                 String name = rs.getString("nombre");
                 String password = rs.getString("password");
-                Integer weight = rs.getInt("peso");
+                float weight = rs.getFloat("peso");
                 Timestamp updatedAtTimestamp = rs.getTimestamp("updated_at");
                 LocalDateTime createdAt = createdAtTimestamp != null ? createdAtTimestamp.toLocalDateTime() : null;
                 LocalDateTime updatedAt = updatedAtTimestamp != null ? updatedAtTimestamp.toLocalDateTime() : null;
@@ -121,7 +175,7 @@ public class UserDAOImpl implements UserDAO {
                 String nick = rs.getString("nick");
                 String name = rs.getString("nombre");
                 String password = rs.getString("password");
-                Integer weight = rs.getInt("peso");
+                float weight = rs.getFloat("peso");
                 Timestamp updatedAtTimestamp = rs.getTimestamp("updated_at");
                 LocalDateTime createdAt = createdAtTimestamp != null ? createdAtTimestamp.toLocalDateTime() : null;
                 LocalDateTime updatedAt = updatedAtTimestamp != null ? updatedAtTimestamp.toLocalDateTime() : null;
