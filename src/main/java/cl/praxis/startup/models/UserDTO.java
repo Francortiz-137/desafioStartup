@@ -15,11 +15,11 @@ public class UserDTO {
     private String nick;
     private String name;
     private String password;
-    private Integer weight;
+    private float weight;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public UserDTO(String email, String nick, String name, String password, Integer weight, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public UserDTO(String email, String nick, String name, String password, float weight, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.email = email;
         this.nick = nick;
         this.name = name;

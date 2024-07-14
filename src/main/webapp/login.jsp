@@ -19,15 +19,23 @@
         <h2 class="text-center">Inicio de Sesión</h2>
         <form action="userServlet?action=login" method="post">
             <div class="form-group">
-                <label for="correo">Correo</label>
-                <input type="email" class="form-control" id="correo" name="correo" required>
+                <label for="email">Correo</label>
+                <input type="email" class="form-control" id="email" name="email" required>
 
                 <label for="password">Contraseña</label>
                 <input type="password" class="form-control" id="password" name="password" required>
             </div>
+            <%
+                String error = (String) request.getAttribute("error");
+                if (error != null) {
+                    out.println("<p style='color:red;'>" + error + "</p>");
+                }
+            %>
             <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
         </form>
+        <a class="btn btn-secondary" href="index.jsp">Volver</a>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>
